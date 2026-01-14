@@ -14,5 +14,25 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     //{ name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    {
+      name: 'public',
+      testMatch: /vocea\.spec\.ts/,
+    },
+    {
+      name: 'authenticated',
+      testMatch: /auth\.spec\.ts/,
+      dependencies: ['public'],
+      use: {
+        storageState: 'storage/auth.json',
+      },
+    },
+    {
+      name: 'dashboard',
+      testMatch: /dashboard\.spec\.ts/,
+      dependencies: ['authenticated'],
+      use: {
+        storageState: 'storage/auth.json',
+      },
+    },
   ],
 });
