@@ -6,14 +6,14 @@ export default defineConfig({
   retries: 1,
   use: {
     headless: true,
-    viewport: { width: 1280, height: 720 },
+    viewport: { width: 2560, height: 1600},
     ignoreHTTPSErrors: true,
     video: 'on-first-retry',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'],} },
     //{ name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'],} },
     {
       name: 'public',
       testMatch: /vocea\.spec\.ts/,
@@ -21,7 +21,6 @@ export default defineConfig({
     {
       name: 'authenticated',
       testMatch: /auth\.spec\.ts/,
-      dependencies: ['public'],
       use: {
         storageState: 'storage/auth.json',
       },
@@ -29,10 +28,12 @@ export default defineConfig({
     {
       name: 'dashboard',
       testMatch: /dashboard\.spec\.ts/,
-      dependencies: ['authenticated'],
-      use: {
-        storageState: 'storage/auth.json',
-      },
+      dependencies: ['authenticated']
+    },
+    {
+      name: 'users',
+      testMatch: /user\.spec\.ts/,
+      dependencies: ['authenticated']
     },
   ],
 });

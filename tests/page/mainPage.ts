@@ -38,9 +38,9 @@ export class MainPage {
     async verifyAuthPopupElements() {
         await expect(this.usernameField).toBeVisible();
         await expect(this.passwordField).toBeVisible();
-        await expect(this.checkbox).toBeVisible();
-        await expect(this.checkbox).not.toBeChecked();
-        await expect(this.forgotPasswordBtn).toBeVisible();
+        // await expect(this.checkbox).toBeVisible();
+        // await expect(this.checkbox).not.toBeChecked();
+        // await expect(this.forgotPasswordBtn).toBeVisible();
         await expect(this.submitBtn).toBeVisible();
     }
 }

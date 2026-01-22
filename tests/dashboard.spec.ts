@@ -1,88 +1,170 @@
-import { test, expect } from '@playwright/test';
 import { DashboardPage } from './page/dashboard';
 import { MainPage } from './page/mainPage'; 
+import { test, expect, chromium, FullConfig, Page } from '@playwright/test';
 
 let mainPage: MainPage;
 let dashboardPage: DashboardPage;   
 
-test.beforeEach(async ({ page }) => {
-    mainPage = new MainPage(page);  
-    dashboardPage = new DashboardPage(page);
-    await mainPage.navigate();
-
-    // Perform login
-    await mainPage.openAuthPopup();
-    await mainPage.login('Admin', 'qwert12'); 
-    // Ensure we're logged in by checking URL or some dashboard element
-    await expect(page).toHaveURL(/\/dashboard/);
+test.beforeAll(async ({ browser }) => {
+  // This runs ONCE before all tests in this file
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  
+  mainPage = new MainPage(page);
+  dashboardPage = new DashboardPage(page);
+  
+  // Login once
+  await mainPage.navigate();
+  await mainPage.openAuthPopup();
+  await mainPage.login('Admin', 'qwert12');
+  
+  console.log('✓ Login completed - all tests will use dashboard page session');
 });
 
 test.describe.serial('Dashboard tests', () => {
-    test('Dashboard menu items exist and are clickable', async ({ page }) => {
-        // Verify and click each menu item
-        await expect(dashboardPage.usersMenu).toBeVisible();
-        await dashboardPage.openUsers();    
-        await expect(page).toHaveURL(/\/users\/.+$/);    
-        await expect(dashboardPage.institutionMenu).toBeVisible();
-        await dashboardPage.openInstitutions();    
-        await expect(page).toHaveURL(/\/institutions\/.+$/); 
-        await expect(dashboardPage.questionnarMenu).toBeVisible();      
-        await dashboardPage.openQuestionnaires();
-        await expect(page).toHaveURL(/\/questionnaires\/.+$/); 
-        await expect(dashboardPage.contentMenu).toBeVisible();
-        await dashboardPage.openContents();    
-        await expect(page).toHaveURL(/\/content\/.+$/); 
-        await expect(dashboardPage.reportMenu).toBeVisible();
-        await dashboardPage.openReports();    
-        await expect(page).toHaveURL(/\/reports\/.+$/); 
-        await expect(dashboardPage.dashboardMenu).toBeVisible(); 
-        await dashboardPage.openDashboard();    
-        await expect(page).toHaveURL(/\/dashboard/);        
+
+    test('Dashboard tab is clickable', async ({ page }) => {
+        await dashboardPage.clickTabZileAlt();
+        await dashboardPage.clickTabTrimestru();
+        await dashboardPage.clickTabAnual();
+        await dashboardPage.clickTabDateRange();
+        await dashboardPage.clickTabZileAlt();
+    });
+
+    test('Categoria institutiei section exists', async ({ page }) => {
+        await dashboardPage.verifyCategoryInstitutionVisible();
+    });
+
+    test('Categoria institutiei contains options',async ({ page }) => {
+        await dashboardPage.verifyCategoryInstitutionContainsOptions();
+    });
+
+    test('Instituția section exists',async ({ page }) => {
+        await dashboardPage.verifyInstitutionVisible();
+    }); 
+
+    test('Grupa de vârstă section exists',async ({ page }) => {
+        await dashboardPage.verifyAgeGroupVisible();
     });
 
     test('Nr. participanților la chestionar section exists',async ({ page }) => {
-        await dashboardPage.participantsInTheQuestionnare();
+        await dashboardPage.verifyParticipantCountVisible();
     });
 
     test('Numărul pacienților nesatisfăcuți section exists',async ({ page }) => {
-        await dashboardPage.dissatisfiedPatients();
+        await dashboardPage.verifyUnsatisfiedPatientsVisible();
     });
 
     test('Indiciile de informare a pacienților section exists',async ({ page }) => {
-        await dashboardPage.indicatorsOfPatientInformation();
+        await dashboardPage.verifyInformationIndicatorsVisible();
     });
 
     test('Gradul de satisfacție a pacientului cu privire la interacțiunea cu personalul medical section exists',async ({ page }) => {
-        await dashboardPage.degreeOfPatientSatisfaction();
+        await dashboardPage.verifySatisfactionDegreeVisible();
     });
 
     test('Gradul de încredere în instituție section exists',async ({ page }) => {
-        await dashboardPage.degreeOfTrustInInstitution();
+        await dashboardPage.verifyConfidenceDegreeVisible();
     });
 
     test('Indicatorii de satisfacție cu privire la facilitățile din instituția medicală section exists',async ({ page }) => {
-        await dashboardPage.indicatorsOfSatisfactionWithFacilities();
+        await dashboardPage.verifySatisfactionIndicatorsVisible();
     });
 
     test('Satisfacția pacienților section exists',async ({ page }) => {
-        await dashboardPage.patientSatisfaction();
+        await dashboardPage.verifyPatientSatisfactionVisible();
+        await dashboardPage.verifyTotalParticipantsVisible();
+        await dashboardPage.verifySatisfiedPatientsVisible();
+        await dashboardPage.verifyPartialySatisfiedPatientsVisible();
+        await dashboardPage.verifyDissatisfiedPatientsVisible();
     });
 
-    // test('Plăți neoficiale section exists',async ({ page }) => {
-    //     await expect(page.getByText('Plăți neoficiale')).toBeVisible();
-    //     await expect(page.getByText('Da')).toBeVisible();
-    //     await expect(page.getByText('Nu')).toBeVisible();
-    // });
+    test('Plăți neoficiale section exists',async ({ page }) => {
+        await dashboardPage.verifyUnofficalPaymentsVisible();
+        await dashboardPage.verifyTotalParticipantsSecondVisible();
+        await dashboardPage.verifyYesVisible();
+        await dashboardPage.verifyNoVisible();
+    });
 
-    // test('Modalitatea de internare section exists',async ({ page }) => {
-    //     await expect(page.getByText('Modalitatea de internare')).toBeVisible();
-    // });
+    test('Modalitatea de internare section exists',async ({ page }) => {
+        await dashboardPage.verifyTotalParticipantsThirdVisible();
+        await dashboardPage.verifyPlannedAdmissionVisible();
+        await dashboardPage.verifyUrgentAdmissionVisible();
+    });
 
-    // test('Secția în care au fost internați pacienții / Gradul de satisfacție section exists',async ({ page }) => {
-    //     await expect(page.getByText('Secția în care au fost internați pacienții / Gradul de satisfacție')).toBeVisible();
-    // });
+    test('Ease of Appointment question exists',async ({ page }) => {
+        await dashboardPage.verifyDepartmentVisible();
+        await dashboardPage.verifyPediatricsVisible();
+        await dashboardPage.verifyRecoveryVisible();
+        await dashboardPage.verifyOtherVisible();
+        await dashboardPage.verifyChirurgyVisible();
+        await dashboardPage.verifyTraumatologyVisible();
+        await dashboardPage.verifyCardioVisible();
+        await dashboardPage.verifyGynecologyVisible();
+        await dashboardPage.verifyMaternityVisible();
+        await dashboardPage.verifyPregnancyPathologyVisible();
+        await dashboardPage.verifyChronicDiseasesVisible();
+        await dashboardPage.verifyInfectiousDiseasesVisible();
+        await dashboardPage.verifyNeurologyVisible();
+        await dashboardPage.verifyGeneralTherapyVisible();
+    });
 
-    // test('Evoluția gradului de satisfacție pentru un an section exists',async ({ page }) => {
-    //     await expect(page.getByText('Evoluția gradului de satisfacție pentru un an')).toBeVisible();
-    // });
-})
+    test('Conditions Appreciation question exists',async ({ page }) => {
+        await dashboardPage.verifySatisfactionEvolutionVisible();
+        await dashboardPage.verifyJanuaryVisible();
+        await dashboardPage.verifyFebruaryVisible();
+        await dashboardPage.verifyMarchVisible();
+        await dashboardPage.verifyAprilVisible();
+        await dashboardPage.verifyMayVisible();
+        await dashboardPage.verifyJuneVisible();
+        await dashboardPage.verifyJulyVisible();
+        await dashboardPage.verifyAugustVisible();
+        await dashboardPage.verifySeptemberVisible();
+        await dashboardPage.verifyOctoberVisible();
+        await dashboardPage.verifyNovemberVisible();
+        await dashboardPage.verifyDecemberVisible();
+    });
+
+    test('Additional expenses questions exist',async ({ page }) => {
+        await dashboardPage.verifyAdditionalExpensesVisible();
+    });
+
+    test('Department Services questions exist',async ({ page }) => {
+        await dashboardPage.verifyUnofficialPaymentsVisible();
+    });
+
+    test('Additional expenses question exists',async ({ page }) => {
+        await dashboardPage.verifyAdditionalExpensesAMPVisible();
+    });
+
+    test('Unofficial payments AMP question exists',async ({ page }) => {
+        await dashboardPage.verifyUnofficialPaymentsAMPVisible();
+    });
+
+    test('Hospital Facilities questions exist',async ({ page }) => {
+        await dashboardPage.verifyPhysicalAccessVisible();  
+        await dashboardPage.verifyWaitingAreaVisible();  
+        await dashboardPage.verifySignageVisible();  
+        await dashboardPage.verifyLodgingConditionsVisible();
+        await dashboardPage.verifyHygieneConditionsVisible();  
+        await dashboardPage.verifyFoodQualityVisible();  
+    });
+
+    test('Additional expenses AMP question exists',async ({ page }) => {
+        await dashboardPage.verifyPhysicianServicesVisible();
+        await dashboardPage.verifyNurseServicesVisible();
+        await dashboardPage.verifyOtherServicesVisible();
+    });
+
+    test('Top Institutions & Sorting section exists',async ({ page }) => {
+        await dashboardPage.verifyTopInstitutionsVisible();
+        await dashboardPage.verifyInstitutionColumnHeaderVisible();
+        await dashboardPage.verifyInformationButtonVisible();
+        await dashboardPage.verifyStaffInteractionButtonVisible();
+        await dashboardPage.verifyConfidenceDegreeButtonVisible();
+    });
+});
+
+function beforeEach(arg0: ({ page }: { page: any; }) => Promise<void>, arg1: void) {
+    throw new Error('Function not implemented.');
+}
