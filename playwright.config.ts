@@ -35,5 +35,9 @@ export default defineConfig({
       testMatch: /user\.spec\.ts/,
       dependencies: ['authenticated']
     },
+    {
+      name: 'form',
+      testMatch: /form\.spec\.ts/
+    },
   ],
 });
