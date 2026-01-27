@@ -98,6 +98,543 @@ export class FormPage {
     // Click it
     await button.click();
     await expect(this.page.getByText('Pasul 1 din 8')).toBeVisible();
-    console.log(`✓ Navigated to next page`);
+    console.log(`✓ Navigated to 1 page`);
   }
+
+  async verifyThirdPageElements() {
+    await expect(this.page.getByText('Pasul 1 din 8').first()).toBeVisible();
+    await expect(this.page.getByText('Date generale').first()).toBeVisible();
+    await expect(this.page.getByText('Vizita Dvs. a fost prima ca pacient(ă) în acest spital?').first()).toBeVisible();
+    await expect(this.page.getByText('Nu').first()).toBeVisible();
+    await expect(this.page.getByText('Da').first()).toBeVisible();
+    await expect(this.page.getByText('Genul Dvs').first()).toBeVisible();
+    await expect(this.page.getByText('Feminin')).toBeVisible(); 
+    await expect(this.page.getByText('Masculin')).toBeVisible();
+    await expect(this.page.getByText('Vârsta Dvs').first()).toBeVisible();
+    await expect(this.page.getByPlaceholder('Selectează vârsta')).toBeVisible();
+    await expect(this.page.getByText('Câte zile ați fost internat(ă) în spital?').first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: '1-6 zile' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: '7-14 zile' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Mai mult de 15 zile' }).first()).toBeVisible();
+    await expect(this.page.getByText('Care a fost modalitatea de internare în spital?').first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Internare programată' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Internare urgentă' }).first()).toBeVisible();
+    await expect(this.page.getByText('În care secție ați fost internat/ă?').first()).toBeVisible();
+    await expect(this.page.getByPlaceholder('')).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitThirdPageElements() {
+    // Select "Da" for first question
+    await this.page.locator('input[type="radio"][value="0"]').check();
+    // Select "Feminin" for gender
+    await this.page.getByText('Feminin').click();
+    // Select age from dropdown
+    await this.page.getByPlaceholder('Selectează vârsta').click();
+    await this.page.getByText('25').click();
+    // Select "1-6 zile" for hospitalization duration
+    await this.page.getByRole('radio', { name: '1-6 zile' }).first().click();
+    // Select "Internare programată" for admission type
+    await this.page.getByRole('radio', { name: 'Internare programată' }).first().click();
+    try {
+      const optionText = 'Neurologie';
+      // Open dropdown
+      const selectInput = this.page.locator('input[aria-haspopup="listbox"]').last();
+      await selectInput.click();
+      console.log('✓ Dropdown opened');
+      
+      await this.page.waitForTimeout(500);
+      
+      // Use regex for exact match to avoid partial matches
+      const option = this.page.locator('[role="option"]').filter({ 
+        hasText: new RegExp(`^${optionText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) 
+      }).first();
+      
+      // Scroll and click
+      await option.scrollIntoViewIfNeeded();
+      await expect(option).toBeVisible({ timeout: 10000 });
+      await option.click();
+      
+      console.log(`✓ Successfully selected: "${optionText}"\n`);
+      await this.page.waitForTimeout(400);
+      
+    } catch (error) {
+      console.error(`✗ Error selecting option: ${error}`);
+    } 
+
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' });
+  
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 2 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 2 page`);
+  }
+
+  async verifyFourthPageElements() {
+    // await this.generatePageElementsScript ();
+
+    await expect(this.page.getByText('Pasul 2 din 8')).toBeVisible();
+    await expect(this.page.getByText('Mulțumim pentru completare până la această etapă.')).toBeVisible();
+    await expect(this.page.getByText('În același timp, în special dacă ați bifat Parțial satisfăcut/ă sau Nesatisfăcut/ă, rugăm să indicați la care din următoarele compartimente v-ați referit:')).toBeVisible();
+    await expect(this.page.getByText('Prestarea/acordarea serviciilor medicale?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).first()).toBeVisible();
+    await expect(this.page.getByText('Informare privind drepturile și responsabilitățile pacientului?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(1)).toBeVisible();
+    await expect(this.page.getByText('Asigurarea medicală și plățile suplimentare în sănătate?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(2)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(2)).toBeVisible();
+    await expect(this.page.getByText('Facilitățile/dotările din spital?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(3)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(3)).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitFourthPageElements() {
+    // Select "Da" for first question
+    await this.page.getByRole('radio', { name: 'Da' }).first().click();
+    // Select "Nu" for second question
+    await this.page.getByRole('radio', { name: 'Nu' }).nth(1).click();
+    // Select "Da" for third question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(2).click();
+    // Select "Nu" for fourth question
+    await this.page.getByRole('radio', { name: 'Nu' }).nth(3).click();
+
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 3 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 3 page`);
+  }
+
+  async verifyFifthPageElements() {
+    // await this.generatePageElementsScript();
+
+    await expect(this.page.getByText('Pasul 3 din 8')).toBeVisible();
+    await expect(this.page.getByText('Acordarea serviciilor medicale')).toBeVisible();
+    await expect(this.page.getByText('Cunoașteți numele medicului Dvs. curant/care v-a tratat?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).first()).toBeVisible();
+    await expect(this.page.getByText('Medicul v-a informat despre toate detaliile tratamentului și diagnosticului?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).first()).toBeVisible();
+    await expect(this.page.getByText('Medicul v-a informat despre riscurile și consecințele tratamentului administrat, posibilele complicații?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(2)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(2)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(1)).toBeVisible();
+    await expect(this.page.getByText('Medicii din spital au fost cooperanți și politicoși cu Dvs.?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(3)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(3)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(2)).toBeVisible();
+    await expect(this.page.getByText('Asistenții medicali au fost cooperanți și politicoși cu Dvs.?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(4)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(4)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(3)).toBeVisible();
+    await expect(this.page.getByText('Testele și procedurile v-au fost explicate în detalii?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(5)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(5)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(4)).toBeVisible();
+    await expect(this.page.getByText('Asistenții/tele medicali/e au realizat procedurile cu profesionalism?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(6)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(6)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(5)).toBeVisible();
+    await expect(this.page.getByText('Asistenții/tele medicali/au răspuns rapid când au fost chemați?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(7)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(7)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Parțial' }).nth(6)).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitFifthPageElements() {
+    // Select "Da" for first question
+    await this.page.getByRole('radio', { name: 'Da' }).first().click(); 
+    // Select "Da" for second question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(1).click();
+    // Select "Da" for third question 
+    await this.page.getByRole('radio', { name: 'Da' }).nth(2).click();
+    // Select "Da" for fourth question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(3).click();    
+    // Select "Da" for fifth question 
+    await this.page.getByRole('radio', { name: 'Da' }).nth(4).click();
+    // Select "Da" for sixth question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(5).click();
+    // Select "Da" for seventh question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(6).click();
+    // Select "Da" for eighth question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(7).click();
+    // Wait for button to become enabled by polling
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 4 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 4 page`);  
+  }
+
+  async verifySixthPageElements() {
+    // await this.generatePageElementsScript ();
+
+    await expect(this.page.getByText('Pasul 4 din 8')).toBeVisible();
+    await expect(this.page.getByText('Informarea despre drepturile și responsabilitățile ca pacient')).toBeVisible();
+    await expect(this.page.getByText('Ați fost informat/ă cu privire la drepturile Dvs?')).toBeVisible();
+    await expect(this.page.getByText('Citește tot').first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).first()).toBeVisible();
+    await expect(this.page.getByText('Ați fost informat/ă cu privire la responsabilitățile Dvs?')).toBeVisible();
+    await expect(this.page.getByText('Citește tot').last()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(1)).toBeVisible();
+    await expect(this.page.getByText('Despre care dintre următoarele instrumente propuse pentru colectarea opiniei Dvs., ați fost informat?')).toBeVisible();
+    await expect(this.page.getByText('(bifați mai multe variante de răspuns)')).toBeVisible();
+    await expect(this.page.getByText('Adresarea/plângerea directă la șeful secției sau la director')).toBeVisible();
+    await expect(this.page.getByText('Registrul de reclamații')).toBeVisible();
+    await expect(this.page.getByText('Cutia pentru sugestii')).toBeVisible();
+    await expect(this.page.getByText('Petiții (scrisoare, cerere, sesizare)')).toBeVisible();
+    await expect(this.page.getByText('Chestionarul de evaluare a gradului de satisfacție a pacientului')).toBeVisible();
+    await expect(this.page.getByText('Nici unul')).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitSixthPageElements() {
+    // Select "Da" for first question
+    await this.page.getByRole('radio', { name: 'Da' }).first().click();
+    // Select "Da" for second question
+    await this.page.getByRole('radio', { name: 'Da' }).nth(1).click();
+    // Select multiple options for third question
+    await this.page.getByText('Adresarea/plângerea directă la șeful secției sau la director').click();
+    await this.page.getByText('Chestionarul de evaluare a gradului de satisfacție a pacientului').click();
+    
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 5 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 5 page`); 
+  }
+
+  async generatePageElementsScript(): Promise<void> {
+    console.log('\n╔════════════════════════════════════════════════════════════╗');
+    console.log('║     PLAYWRIGHT PAGE ELEMENTS VERIFICATION SCRIPT          ║');
+    console.log('╚════════════════════════════════════════════════════════════╝\n');
+
+    // Get all text elements
+    await this.inspectTextElements();
+
+    // Get all buttons
+    await this.inspectButtons();
+
+    // Get all input fields (text, email, password, etc.)
+    await this.inspectInputFields();
+
+    // Get all radio buttons
+    await this.inspectRadioButtons();
+
+    // Get all checkboxes
+    await this.inspectCheckboxes();
+
+    // Get all dropdown lists (select elements)
+    await this.inspectDropdowns();
+
+    // Get all links
+    await this.inspectLinks();
+
+    // Get all form elements
+    await this.inspectFormElements();
+
+    console.log('\n╔════════════════════════════════════════════════════════════╗');
+    console.log('║              SCRIPT GENERATION COMPLETE                   ║');
+    console.log('╚════════════════════════════════════════════════════════════╝\n');
+  }
+
+  private async inspectTextElements(): Promise<void> {
+    console.log('📝 TEXT ELEMENTS:\n');
+    
+    const textElements = await this.page.locator('text=/\\S+/').all();
+    const uniqueTexts = new Set<string>();
+
+    for (const element of textElements) {
+      try {
+        const text = await element.textContent();
+        if (text && text.trim().length > 0 && text.trim().length < 200) {
+          const cleanText = text.trim().substring(0, 100);
+          
+          if (!uniqueTexts.has(cleanText)) {
+            uniqueTexts.add(cleanText);
+            const isVisible = await element.isVisible();
+            
+            console.log(`  await expect(this.page.getByText('${cleanText}${cleanText.length === 100 ? '...' : ''}')).toBeVisible();`);
+        }
+      }   } catch (error) {
+        // Skip elements that fail
+    }
+  }
+  }
+  private async inspectButtons(): Promise<void> {
+    console.log('\n🔘 BUTTONS:\n');
+    
+    const buttons = await this.page.locator('button, [role="button"]').all();
+
+    for (const button of buttons) {
+      try {
+        const text = await button.textContent();
+        const isVisible = await button.isVisible();
+        const isEnabled = await button.isEnabled();
+        
+        if (text && text.trim().length > 0) {
+          const cleanText = text.trim();
+          console.log(`  // Button: "${cleanText}"`);
+          console.log(`  const ${this.createVariableName(cleanText)} = this.page.locator('button').filter({ hasText: '${cleanText}' });`);
+          console.log(`  await expect(${this.createVariableName(cleanText)}).toBeVisible();`);
+          console.log(`  await expect(${this.createVariableName(cleanText)}).${isEnabled ? 'toBeEnabled' : 'toBeDisabled'}();`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectInputFields(): Promise<void> {
+    console.log('\n📥 INPUT FIELDS:\n');
+    
+    const inputs = await this.page.locator('input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea').all();
+
+    for (const input of inputs) {
+      try {
+        const isVisible = await input.isVisible();
+        const placeholder = await input.getAttribute('placeholder');
+        const type = await input.getAttribute('type');
+        const name = await input.getAttribute('name');
+        const label = await this.getAssociatedLabel(input);
+
+        const identifier = label || placeholder || name || `input-${type}`;
+        
+        if (isVisible) {
+          console.log(`  // Input Field: ${identifier}`);
+          console.log(`  const ${this.createVariableName(identifier)} = this.page.locator('input[name="${name}"]');`);
+          console.log(`  await expect(${this.createVariableName(identifier)}).toBeVisible();`);
+          console.log(`  // To fill: await ${this.createVariableName(identifier)}.fill('your_value_here');`);
+          console.log(`  // To get value: const value = await ${this.createVariableName(identifier)}.inputValue();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectRadioButtons(): Promise<void> {
+    console.log('\n⭕ RADIO BUTTONS:\n');
+    
+    const radios = await this.page.locator('input[type="radio"]').all();
+
+    for (const radio of radios) {
+      try {
+        const isVisible = await radio.isVisible();
+        const label = await this.getAssociatedLabel(radio);
+        const value = await radio.getAttribute('value');
+        const name = await radio.getAttribute('name');
+
+        if (isVisible) {
+          console.log(`  // Radio Button: ${label || value}`);
+          console.log(`  const ${this.createVariableName(label || value)} = this.page.locator('input[type="radio"][value="${value}"]');`);
+          console.log(`  await expect(${this.createVariableName(label || value)}).toBeVisible();`);
+          console.log(`  // To select: await ${this.createVariableName(label || value)}.check();`);
+          console.log(`  // To verify selected: await expect(${this.createVariableName(label || value)}).toBeChecked();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectCheckboxes(): Promise<void> {
+    console.log('\n☑️ CHECKBOXES:\n');
+    
+    const checkboxes = await this.page.locator('input[type="checkbox"]').all();
+
+    for (const checkbox of checkboxes) {
+      try {
+        const isVisible = await checkbox.isVisible();
+        const label = await this.getAssociatedLabel(checkbox);
+        const value = await checkbox.getAttribute('value');
+
+        if (isVisible) {
+          console.log(`  // Checkbox: ${label || value}`);
+          console.log(`  const ${this.createVariableName(label || value)} = this.page.locator('input[type="checkbox"][value="${value}"]');`);
+          console.log(`  await expect(${this.createVariableName(label || value)}).toBeVisible();`);
+          console.log(`  // To check: await ${this.createVariableName(label || value)}.check();`);
+          console.log(`  // To uncheck: await ${this.createVariableName(label || value)}.uncheck();`);
+          console.log(`  // To verify checked: await expect(${this.createVariableName(label || value)}).toBeChecked();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectDropdowns(): Promise<void> {
+    console.log('\n📋 DROPDOWN LISTS:\n');
+    
+    const selects = await this.page.locator('select').all();
+
+    for (const select of selects) {
+      try {
+        const isVisible = await select.isVisible();
+        const id = await select.getAttribute('id');
+        const name = await select.getAttribute('name');
+        const options = await select.locator('option').all();
+
+        const identifier = id || name || 'dropdown';
+
+        if (isVisible) {
+          console.log(`  // Dropdown: ${identifier}`);
+          console.log(`  const ${this.createVariableName(identifier)} = this.page.locator('select[name="${name}"]');`);
+          console.log(`  await expect(${this.createVariableName(identifier)}).toBeVisible();`);
+          console.log(`  // Options available:`);
+
+          for (const option of options) {
+            try {
+              const optionText = await option.textContent();
+              const optionValue = await option.getAttribute('value');
+              console.log(`  //   - ${optionText?.trim() || optionValue}`);
+            } catch (error) {
+              // Skip
+            }
+          }
+
+          console.log(`  // To select: await ${this.createVariableName(identifier)}.selectOption('value_here');`);
+          console.log(`  // To get selected: const selected = await ${this.createVariableName(identifier)}.inputValue();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectLinks(): Promise<void> {
+    console.log('\n🔗 LINKS:\n');
+    
+    const links = await this.page.locator('a').all();
+
+    for (const link of links) {
+      try {
+        const text = await link.textContent();
+        const href = await link.getAttribute('href');
+        const isVisible = await link.isVisible();
+
+        if (text && text.trim().length > 0 && isVisible) {
+          const cleanText = text.trim().substring(0, 50);
+          console.log(`  // Link: "${cleanText}"`);
+          console.log(`  const ${this.createVariableName(cleanText)} = this.page.getByRole('link', { name: '${cleanText}' });`);
+          console.log(`  await expect(${this.createVariableName(cleanText)}).toBeVisible();`);
+          console.log(`  // To click: await ${this.createVariableName(cleanText)}.click();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectFormElements(): Promise<void> {
+    console.log('\n📋 FORM ELEMENTS SUMMARY:\n');
+    
+    const forms = await this.page.locator('form').all();
+
+    for (let i = 0; i < forms.length; i++) {
+      try {
+        const form = forms[i];
+        const isVisible = await form.isVisible();
+        const id = await form.getAttribute('id');
+
+        if (isVisible) {
+          console.log(`  // Form ${i + 1}: ${id || 'No ID'}`);
+          console.log(`  const form${i + 1} = this.page.locator('form${id ? `#${id}` : ''}');`);
+          console.log(`  await expect(form${i + 1}).toBeVisible();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async getAssociatedLabel(element: any): Promise<string> {
+    try {
+      const id = await element.getAttribute('id');
+      if (id) {
+        const label = await this.page.locator(`label[for="${id}"]`).first().textContent();
+        if (label) return label.trim();
+      }
+
+      const parent = await element.locator('..').textContent();
+      if (parent) {
+        const cleanParent = parent.trim().substring(0, 50);
+        return cleanParent;
+      }
+    } catch (error) {
+      // Return empty string
+    }
+    return '';
+  }
+
+  private createVariableName(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '')
+      .substring(0, 30);
+  }
+
+  // Helper method to verify all elements at once
+  async verifyAllPageElements(): Promise<void> {
+    console.log('\n✅ VERIFYING ALL PAGE ELEMENTS...\n');
+
+    const elements = await this.page.locator('*').all();
+    let visibleCount = 0;
+
+    for (const element of elements) {
+      try {
+        if (await element.isVisible()) {
+          visibleCount++;
+        }
+      } catch (error) {
+        // Skip
+      }
+    }
+
+    console.log(`📊 Total visible elements: ${visibleCount}`);
+  }
+
+  // Helper method to generate filled form script
+  async generateFilledFormScript(formData: Record<string, string>): Promise<void> {
+    console.log('\n📝 FILLED FORM SCRIPT:\n');
+
+    console.log('async fillFormWithData() {');
+    
+    for (const [fieldName, value] of Object.entries(formData)) {
+      console.log(`  // Fill: ${fieldName}`);
+      console.log(`  await this.page.locator('[name="${fieldName}"]').fill('${value}');`);
+    }
+
+    console.log('}');
+  }
+
 }

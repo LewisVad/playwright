@@ -36,4 +36,23 @@ test.describe.serial('Form tests', () => {
     await formPage.submitSecondPageElements();
   });
 
+  test('Check elements and submit third page', async ({ page }) => {
+    await formPage.verifyThirdPageElements();
+    await formPage.submitThirdPageElements();
+  });
+
+  test('Check elements and submit fourth page', async ({ page }) => {
+    await formPage.verifyFourthPageElements();
+    await formPage.submitFourthPageElements();
+  });
+
+  test('Check elements and submit fifth page', async ({ page }) => {
+    await formPage.verifyFifthPageElements();
+    await formPage.submitFifthPageElements();
+  });
+
+  test('Check elements and submit sixth page', async ({ page }) => {
+    await formPage.verifySixthPageElements();
+    await formPage.submitSixthPageElements();
+  });
 });
