@@ -320,7 +320,7 @@ export class FormPage {
     // Select multiple options for third question
     await this.page.getByText('Adresarea/plângerea directă la șeful secției sau la director').click();
     await this.page.getByText('Chestionarul de evaluare a gradului de satisfacție a pacientului').click();
-    
+
     // Wait for button to become enabled by polling
     const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
     // Wait for it to be enabled
@@ -330,6 +330,144 @@ export class FormPage {
     await button.click();
     await expect(this.page.getByText('Pasul 5 din 8')).toBeVisible();
     console.log(`✓ Navigated to 5 page`); 
+  }
+
+  async verifySeventhPageElements() {
+    await expect(this.page.getByText('Pasul 5 din 8')).toBeVisible();
+    await expect(this.page.getByText('Asigurarea medicală și plăți suplimentare')).toBeVisible();
+    await expect(this.page.getByText('Sunteți persoană asigurată?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).first()).toBeVisible();
+    await expect(this.page.getByText('Asigurarea medicală a acoperit toate cheltuielile aferente asistenței medicale pe care ați primit-o în spital?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(1)).toBeVisible();
+    await expect(this.page.getByText('Ați efectuat plăți neoficiale pe durata spitalizării Dvs. în instituția noastră?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(2)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(2)).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitSeventhPageElements() {
+    // Select "Da" for first question
+    await this.page.getByRole('radio', { name: 'Da' }).first().click();
+    // Select "Da" for second question  
+    await this.page.getByRole('radio', { name: 'Da' }).nth(1).click();
+    // Select "Nu" for third question
+    await this.page.getByRole('radio', { name: 'Nu' }).nth(2).click();
+
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 6 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 6 page`); 
+  }
+
+  async verifyEighthPageElements() {
+    // await this.generatePageElementsScript();
+
+    await expect(this.page.getByText('Pasul 6 din 8')).toBeVisible();
+    await expect(this.page.getByText('Facilitățile din spital')).toBeVisible();
+    await expect(this.page.getByText('Evaluați cu un punctaj de la 1 la 5 (1-nesatisfăcător, 5 total satisfăcător) următoarele condiții din spital:')).toBeVisible();
+    await expect(this.page.getByText('Accesul fizic în spital (indicatoare, rampe, balustrade, scări comode, bănci)')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').first()).toBeVisible();
+    await expect(this.page.getByText('Spațiul destinat așteptării pentru pacienți')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').nth(1)).toBeVisible();
+    await expect(this.page.getByText('Prezența indicatoarelor, panourilor informative pentru a vă orienta în spital/a găsi cabinetul/specialistul necesar')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').nth(2)).toBeVisible();
+    await expect(this.page.getByText('Condițiile de cazare în spital (numărul de paturi în salon, accesul la baie, apă caldă etc)')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').nth(3)).toBeVisible();
+    await expect(this.page.getByText('Condițiile de igienă în spital (în sala de proceduri, secție, salon, bloc sanitar etc.) pe durata aflării Dvs')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').nth(4)).toBeVisible();
+    await expect(this.page.getByText('Calitatea alimentării în spital: cantitatea porțiilor de mâncare, frecvența alimentării, temperatura alimentelor, temperatura băuturilor, volumul băuturilor.')).toBeVisible();
+    await expect(this.page.locator('.mantine-Rating-root').nth(5)).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitEighthPageElements() {
+    // Rate all 6 rating components with 5 stars
+    for (let i = 0; i < 6; i++) {
+      const rating = this.page.locator('.mantine-Rating-root').nth(i);
+      await rating.locator('svg').nth(4).click(); // Click the 5th star (index 4)
+    }
+
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 7 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 7 page`); 
+  }
+
+  async verifyNinthPageElements() {
+    await expect(this.page.getByText('Pasul 7 din 8')).toBeVisible();
+    await expect(this.page.getByText('Încrederea pentru spital')).toBeVisible();
+    await expect(this.page.getByText('Dacă ar fi necesar să vă adresați după servicii, ați opta/alege din nou pentru instituția dată?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).first()).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).first()).toBeVisible();
+    await expect(this.page.getByText('Ați recomanda instituția noastră membrilor familiei, rudelor, prietenilor în caz de necesitate?')).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Nu' }).nth(1)).toBeVisible();
+    await expect(this.page.getByRole('radio', { name: 'Da' }).nth(1)).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Mai departe' }).last()).toBeVisible();
+  }
+
+  async submitNinthPageElements() {
+    // Select "Da" for first question
+    await this.page.getByRole('radio', { name: 'Da' }).first().click();
+    // Select "Da" for second question  
+    await this.page.getByRole('radio', { name: 'Da' }).nth(1).click();
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Mai departe' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Pasul 8 din 8')).toBeVisible();
+    console.log(`✓ Navigated to 8 page`); 
+  }
+
+  async verifyTenthPageElements() {
+    await expect(this.page.getByText('Pasul 8 din 8')).toBeVisible();
+
+    await expect(this.page.getByText('Sugestii').first()).toBeVisible();
+    await expect(this.page.getByText('Ce sugestii și recomandări aveți pentru îmbunătățirea calității și siguranței serviciilor în instituția dată?')).toBeVisible();
+    await expect(this.page.getByText('Completează')).toBeVisible();
+    await expect(this.page.getByRole('textbox')).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Înapoi' }).last()).toBeVisible();
+    await expect(this.page.locator('button', { hasText: 'Trimite răspuns' }).last()).toBeVisible();
+  }
+
+  async submitTenthPageElements() {
+    // Fill the text area with a sample suggestion
+    await this.page.getByRole('textbox').fill('Sugestii pentru îmbunătățirea calității serviciilor.');
+
+    // Wait for button to become enabled by polling
+    const button = this.page.getByRole('button', { name: 'Trimite răspuns' }).last();
+    // Wait for it to be enabled
+    await button.waitFor({ state: 'visible' });
+    await expect(button).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button.click();
+    await expect(this.page.getByText('Chestionarul a fost trimis cu succes!')).toBeVisible();
+    await expect(this.page.getByText('Îți mulțumim pentru că ești un pacient responsabil și vrei să contribui la servicii de sănătate mai bune în regiunea ta!')).toBeVisible();
+    console.log(`✓ Form submitted successfully`);
+    // Wait for button to become enabled by polling
+    const button1 = this.page.getByRole('button', { name: 'Pagina principală' }).last();
+    // Wait for it to be enabled
+    await button1.waitFor({ state: 'visible' });
+    await expect(button1).toBeEnabled({ timeout: 10000 });
+    // Click it
+    await button1.click();
   }
 
   async generatePageElementsScript(): Promise<void> {
@@ -351,6 +489,9 @@ export class FormPage {
 
     // Get all checkboxes
     await this.inspectCheckboxes();
+
+    // Get all rating components (1-5 stars)
+    await this.inspectRatingComponents();
 
     // Get all dropdown lists (select elements)
     await this.inspectDropdowns();
@@ -484,6 +625,70 @@ export class FormPage {
           console.log(`  // To check: await ${this.createVariableName(label || value)}.check();`);
           console.log(`  // To uncheck: await ${this.createVariableName(label || value)}.uncheck();`);
           console.log(`  // To verify checked: await expect(${this.createVariableName(label || value)}).toBeChecked();\n`);
+        }
+      } catch (error) {
+        // Skip elements that fail
+      }
+    }
+  }
+
+  private async inspectRatingComponents(): Promise<void> {
+    console.log('\n⭐ RATING COMPONENTS (1-5 STARS):\n');
+    
+    const ratingRoots = await this.page.locator('.mantine-Rating-root').all();
+
+    for (let ratingIndex = 0; ratingIndex < ratingRoots.length; ratingIndex++) {
+      try {
+        const ratingRoot = ratingRoots[ratingIndex];
+        const isVisible = await ratingRoot.isVisible();
+        
+        if (isVisible) {
+          const ratingId = await ratingRoot.getAttribute('id');
+          const ratingInputs = await ratingRoot.locator('input[type="radio"].mantine-Rating-input').all();
+          
+          console.log(`  // Rating Component ${ratingIndex + 1}: ${ratingId || 'No ID'}`);
+          const ratingVarName = `rating${ratingIndex + 1}`;
+          
+          console.log(`  const ${ratingVarName} = this.page.locator('.mantine-Rating-root${ratingId ? `#${ratingId}` : ''}');`);
+          console.log(`  await expect(${ratingVarName}).toBeVisible();`);
+          console.log(`\n  // Available star ratings (0-5 scale):\n`);
+          
+          // Inspect each star option (0-5)
+          for (let starIndex = 0; starIndex < ratingInputs.length; starIndex++) {
+            try {
+              const input = ratingInputs[starIndex];
+              const starValue = await input.getAttribute('value');
+              const starLabel = await input.getAttribute('aria-label');
+              const isChecked = await input.isChecked();
+              
+              const starVarName = `${ratingVarName}Star${starValue}`;
+              const statusIndicator = isChecked ? ' ✓ (currently selected)' : '';
+              
+              console.log(`  //   ${starLabel || starValue} stars${statusIndicator}`);
+              console.log(`  const ${starVarName} = ${ratingVarName}.locator('input[type="radio"][value="${starValue}"]');`);
+              console.log(`  await expect(${starVarName}).toBeVisible();`);
+              
+            } catch (error) {
+              // Skip individual star
+            }
+          }
+          
+          console.log(`\n  // USAGE EXAMPLES FOR RATING ${ratingIndex + 1}:`);
+          console.log(`  // ========================================`);
+          console.log(`\n  // To select a specific rating (e.g., 4 stars):`);
+          console.log(`  await ${ratingVarName}.locator('input[type="radio"][value="4"]').check();`);
+          console.log(`  await this.page.waitForTimeout(300); // Wait for animation`);
+          console.log(`\n  // To verify a specific rating is selected:`);
+          console.log(`  await expect(${ratingVarName}.locator('input[type="radio"][value="4"]')).toBeChecked();`);
+          console.log(`\n  // To get the current rating value:`);
+          console.log(`  const currentRating = await ${ratingVarName}.locator('input[type="radio"]:checked').getAttribute('value');`);
+          console.log(`  console.log('Current rating:', currentRating);`);
+          console.log(`\n  // To verify all rating options are visible:`);
+          console.log(`  for (let i = 0; i <= 5; i++) {`);
+          console.log(`    await expect(${ratingVarName}.locator(\`input[type="radio"][value="\${i}"]\`)).toBeVisible();`);
+          console.log(`  }`);
+          console.log(`\n  // To clear/reset rating (select 0):`);
+          console.log(`  await ${ratingVarName}.locator('input[type="radio"][value="0"]').check();\n`);
         }
       } catch (error) {
         // Skip elements that fail
